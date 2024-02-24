@@ -22,10 +22,10 @@ from flask import Flask, request, jsonify
 import time
 
 from dotenv import load_dotenv
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 load_dotenv()
 
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def create_prompts(age, characters, scenario, positive_values, emotions, lang):
@@ -139,7 +139,27 @@ Use this python list format for output and make the response to escape special c
       model="gpt-3.5-turbo-0125",
       response_format={ "type": "json_object" },
       messages=[
-        {"role": "system", "content": "You are a very lengthy elaborative story teller, with a lot of twist and turn and morals"},
+        {"role": "system", "content": "You are a very lengthy elaborative story teller, with a lot of twist and turn and morals. Give the output in json."},
+        {"role": "user", "content": f"{prompt_template}"}
+      ]
+    )
+    
+    print(response)
+
+    return response.choices[0].message.content
+
+def story_length_increaser(story):
+    prompt_template = f""" This is a outline of a story : \"{story}\" . Expand this story with no title for 10 paragraph. Each paragraph containing 120 words. Please make it lengthy. 
+"""
+
+    from openai import OpenAI
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+      model="gpt-3.5-turbo-0125",
+    #   response_format={ "type": "json_object" },
+      messages=[
+        {"role": "system", "content": "You are a chatbot that provides a long lengthy response."},
         {"role": "user", "content": f"{prompt_template}"}
       ]
     )
@@ -264,7 +284,6 @@ def mongo_add(json_data):
 def start_specific(age, characters, scenario, positive_values, emotions, userId, lang):
     print("Generating Story and Titles and Img Prompt...\n\n")
     story_string = create_prompts(age, characters, scenario, positive_values, emotions, lang)
-    # story_string = create_prompts(16, "dinosaur", "asteroid shower", "kindness", "sadness")
     
     try:
         story_dict = json.loads(story_string)
@@ -275,12 +294,9 @@ def start_specific(age, characters, scenario, positive_values, emotions, userId,
     index = str(uuid.uuid4())
     print("\n\nUUID generated !! --> ", index)
 
-    # print(story_dict['title'])
-    # print(story_dict['story'])
-    # print(story_dict['image_prompt'])
-
     try:
-        story = story = re.sub(r'\\n', '<br>', story_dict['story'])
+        short_story = story_dict['story']
+        story = re.sub(r'\\n', '<br>', story_length_increaser(short_story))
         title = story_dict['title']
         if title.lower() == "error":
             return jsonify({"title": "Story Generation Error - Please re-check your Parameters"})
@@ -290,15 +306,7 @@ def start_specific(age, characters, scenario, positive_values, emotions, userId,
         return jsonify({"title": "Story Generation Error - Please re-check your Parameters"})
     
     thumb_img_path = compress_image(download_image(create_image(img_prompt), index))
-
-
-
     timestamp = datetime.utcnow()
-
-    # index = str(uuid.uuid4())  # Generate a unique ID as the index
-    # title = "Sample Title 2"
-    # story = "This is a long story about something interesting."
-    # image_paths = ["image_link1.jpg", "image_link2.jpg", "image_link3.jpg"]
     audio_path = convert_tts(story, index)
     audio_duration = get_audio_duration(audio_path)
 
@@ -318,31 +326,12 @@ def start_specific(age, characters, scenario, positive_values, emotions, userId,
     mongo_add(json_data)
     return json_data
 
-
 # Create a Flask app
 app = Flask(__name__)
 
 @app.route('/api/', methods=['GET'])
 def index():
     return "Hello World !!!"
-    
-# @app.route('/api/', methods=['GET'])
-# def index_testing():
-#     return "Hello World !!!"
-
-
-# @app.route('/api/hello', methods=['POST'])
-# def hello_world():
-#     # Get the delay time from the request (default to 1 second if not provided)
-#     delay = 10
-
-#     # Simulate delay
-#     time.sleep(delay)
-
-#     # Return the response
-#     return jsonify({'message': 'hello world'})
-
-
 
 @app.route('/api/generate_story', methods=['POST'])
 def storia_story_responce():
@@ -356,13 +345,6 @@ def storia_story_responce():
     print(characters)
     response = start_specific(age, characters, scenario, positive_values, emotions, userId, lang)
     return response
-    # return jsonify({"title": f"{characters}"})
-
-# Opening tunnel
-# public_url = ngrok.connect("5000", "http")
-
-# # Print the public URL
-# print(f' * ngrok tunnel "{public_url}"')
 
 # Run the Flask app
 if __name__ == '__main__':
