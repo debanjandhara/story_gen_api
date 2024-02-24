@@ -295,7 +295,7 @@ def start_specific(age, characters, scenario, positive_values, emotions, userId,
         story_dict = json.loads(story_string)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e}")
-        return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 402"})
+        return jsonify({"title": "Story Generation Error - Please re-check your Parameters"})
 
     index = str(uuid.uuid4())
     print("\n\nUUID generated !! --> ", index)
@@ -304,21 +304,23 @@ def start_specific(age, characters, scenario, positive_values, emotions, userId,
         short_story = story_dict['story']
         # story_with_slash_n = story_length_increaser(short_story)
         story_with_slash_n = story_length_increaser(story_dict['image_prompt'])
-        story = re.sub(r'\\n', '<br>', story_with_slash_n)
+        story = re.sub(f'\\n', '<br>', story_with_slash_n)
         title = story_dict['title']
         if title.lower() == "error":
-            return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 401"})
+            return jsonify({"title": "Story Generation Error - Please re-check your Parameters"})
         img_prompt = story_dict['image_prompt']
     except Exception as e:
         print(f"An error occurred: {e}")
-        return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 502"})
+        return jsonify({"title": "Story Generation Error - Please re-check your Parameters"})
     
-    thumb_img_path = compress_image(download_image(create_image(img_prompt), index))
+    # thumb_img_path = compress_image(download_image(create_image(img_prompt), index))
+    thumb_img_path = "testing"
     timestamp = datetime.utcnow()
-    audio_path = convert_tts(story, index)
-    audio_duration = get_audio_duration(audio_path)
-
-
+    # audio_path = convert_tts(story, index)
+    audio_path = "testing"
+    # audio_duration = get_audio_duration(audio_path)
+    audio_duration = "testing"
+    
     story_length = count_words(story)
 
     json_data = {
@@ -334,7 +336,7 @@ def start_specific(age, characters, scenario, positive_values, emotions, userId,
         "audio_duration": audio_duration,
     }
 
-    mongo_add(json_data)
+    # mongo_add(json_data)
     return json_data
 
 # Create a Flask app
@@ -346,22 +348,20 @@ def index():
 
 @app.route('/api/generate_story', methods=['POST'])
 def storia_story_responce():
-    try:
-        age = request.args.get('age')
-        characters = request.args.get('characters')
-        scenario = request.args.get('scenario')
-        positive_values = request.args.get('values')
-        emotions = request.args.get('emotions')
-        userId = request.args.get('userId')
-        lang = request.args.get('lang')
-        print(characters)
-        response = start_specific(age, characters, scenario, positive_values, emotions, userId, lang)
-        return response
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 501"})
+    age = request.args.get('age')
+    characters = request.args.get('characters')
+    scenario = request.args.get('scenario')
+    positive_values = request.args.get('values')
+    emotions = request.args.get('emotions')
+    userId = request.args.get('userId')
+    lang = request.args.get('lang')
+    print(characters)
+    response = start_specific(age, characters, scenario, positive_values, emotions, userId, lang)
+    return response
 
 # Run the Flask app
 if __name__ == '__main__':
     app.run()
 
+# start_specific(age, characters, scenario, positive_values, emotions, userId, lang)
+# start_specific(12, "ankit", "dragon world", "kindness", "happiness", "testing", "eng")
