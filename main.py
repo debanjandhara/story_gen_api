@@ -298,6 +298,14 @@ def merge_audio_files(audio_files, output_file):
     print("Output File : ",output_file)
     combined.export(output_file, format="wav")
 
+def convert_wav_to_mp3(wav_file, mp3_file):
+
+    # Load the WAV file
+    audio = AudioSegment.from_wav(wav_file)
+    
+    # Export as MP3
+    audio.export(mp3_file, format="mp3")
+
 # Modified generate_speech function
 def generate_speech(title, story, index):
     # Initialize OpenAI client
@@ -333,10 +341,11 @@ def generate_speech(title, story, index):
 
     # Merge audio files
     merged_file_path = os.path.join(f"content/{index}/", f"audio.wav")
+    mp3_file_path = os.path.join(f"content/{index}/", f"audio.mp3")
     merge_audio_files(audio_files, merged_file_path)
+    convert_wav_to_mp3(merged_file_path, mp3_file_path)
 
-    return merged_file_path
-
+    return mp3_file_path
 
 
 def get_audio_duration(file_path):
