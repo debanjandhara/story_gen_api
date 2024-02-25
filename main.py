@@ -1,34 +1,45 @@
+# AI modules
 import openai
 import langchain
+
+# System Utils
+import os
 import re
 import json
+import time
 import uuid
-
-import os
 import requests
-
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-import urllib.parse
-import pymongo, uuid
-
 from datetime import datetime
 
+
+# Python - MongoDB Connection
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+import urllib.parse     # Mongo Authentication Link Join
+import pymongo, uuid
+
+# Audio time calculator 
 from pydub import AudioSegment
 
-from pyngrok import ngrok
+# API Serve
 from flask import Flask, request, jsonify
 
-import time
 
+# Loding of .env File
 from dotenv import load_dotenv
-
 load_dotenv()
-
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def create_prompts(age, characters, scenario, positive_values, emotions, lang):
+# -----------------------------------------------------------------------------
+
+
+# --------------   Story Generation -----------------------
+
+def title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_values, emotions, lang):
+    
+    # -------  Prompt for FRENCH Story generation -----------------
+    
     if lang=="french":
         prompt_template = f"""
 If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else.
@@ -82,6 +93,9 @@ Use this python list format for output and make the response to escape special c
 """
     
     else:
+        
+        # --------------------  Prompt for other (ENGLISH) language  -----------------------------
+        
         prompt_template = f"""
 
 If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else.
@@ -132,6 +146,8 @@ Use this python list format for output and make the response to escape special c
 {{"title": <title_here_in_string_format>, "story": <story_here_in_string_format>, "image_prompt": <image_prompt_here_in_string_format>}}
 """
 
+    # ----------------  OPENAI Generation Code LLM ----------------------
+
     from openai import OpenAI
     client = OpenAI()
 
@@ -145,9 +161,12 @@ Use this python list format for output and make the response to escape special c
       ]
     )
     
-    print(response)
+    print("Title + Story Outine + Img Prompt --- Direct Response :\n",response,"\n-----------------------------------------------\n")
 
     return response.choices[0].message.content
+
+
+# ------------------------  Story Outline --> Lengthy Story --------------------------
 
 def story_length_increaser(story):
     prompt_template = f""" This is a outline of a story : \"{story}\" . Please make sure the story is expanded to atleast 1000 words. Expand this story with no title for 10 paragraph. Each paragraph containing 120 words. Please make it lengthy. 
@@ -166,9 +185,12 @@ def story_length_increaser(story):
       ]
     )
     
-    print(response)
+    print("Story Increase --- Direct Response :\n",response,"\n-----------------------------------------------\n")
 
     return response.choices[0].message.content
+
+
+# ------------------------- Image Prompt --> Image File ---------------------------
 
 def create_image(prompt):
 
@@ -189,21 +211,28 @@ def create_image(prompt):
 
     return image_url
 
-def compress_image(image_path):
-    import os
-    from PIL import Image
+# Fix the Function for image generation --> add another extra image_compressed.jpg to check image is compressed or not
 
-    quality=35
+# def compress_image(image_path):
+#     import os
+#     from PIL import Image
+
+#     quality=35
     
-    try:
-        img = Image.open(image_path)
-        img.save(image_path, quality=quality, optimize=True)
-        print(f"Compressed: {image_path}")
-        return image_path
-    except Exception as e:
-        print(f"Error compressing {image_path}: {e}")
+#     try:
+#         img = Image.open(image_path)
+#         img.save(image_path, quality=quality, optimize=True)
+#         print(f"Compressed: {image_path}")
+#         return image_path
+#     except Exception as e:
+#         print(f"Error compressing {image_path}: {e}")
 
-def download_image(image_url, index):
+
+
+
+# -------------------------  Download Image from Link ----------------------
+
+def save_img___from_link_to_local(image_url, index):
     directory = f'content/{index}'
     # Check if the directory exists, and if not, create it
     if not os.path.exists(directory):
@@ -218,30 +247,95 @@ def download_image(image_url, index):
         with open(file_path, 'wb') as file:
             file.write(response.content)
         print(f"Image saved to {file_path}")
-        compress_image(file_path)
     else:
         print("Failed to download the image")
 
     return file_path
 
+# -----------------------  Audio Section - Audio Generation ----------------------
 
+# def text_to_audio_generate(input, index):
 
-def convert_tts(input, index):
+#     from openai import OpenAI
+#     client = OpenAI()
 
+#     response = client.audio.speech.create(
+#       model="tts-1",
+#       voice="nova",
+#       input=input
+#     )
+
+#     audio_output_path = f"content/{index}/audio.mp3"
+
+#     response.stream_to_file(audio_output_path)
+
+#     return audio_output_path
+
+# Helper function to split text into chunks
+def split_text(text, chunk_size=4000):
+    chunks = []
+    words = text.split()
+    current_chunk = ""
+    for word in words:
+        if len(current_chunk) + len(word) <= chunk_size:
+            current_chunk += " " + word
+        else:
+            chunks.append(current_chunk.strip())
+            current_chunk = word
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    return chunks
+
+# Helper function to merge audio files
+def merge_audio_files(audio_files, output_file):
+    combined = None
+    for file in audio_files:
+        sound = AudioSegment.from_wav(file)
+        if combined is None:
+            combined = sound
+        else:
+            combined += sound
+    print("Output File : ",output_file)
+    combined.export(output_file, format="wav")
+
+# Modified generate_speech function
+def generate_speech(title, story, index):
+    # Initialize OpenAI client
     from openai import OpenAI
     client = OpenAI()
 
-    response = client.audio.speech.create(
-      model="tts-1",
-      voice="nova",
-      input=input
-    )
+    # Split story into chunks
+    story_chunks = split_text(story)
+    # Define image directory
+    audio_dir = os.path.join(os.curdir, f"content/{index}/")
 
-    audio_output_path = f"content/{index}/audio.mp3"
+    # Create the directory if it doesn't yet exist
+    if not os.path.isdir(audio_dir):
+        os.mkdir(audio_dir)
+    # Generate speech for each chunk
+    audio_files = []
+    response = None  # Initialize response variable outside the loop
+    for i, chunk in enumerate(story_chunks):
+        input_text = title + "\n\n\n\n\n\n\n\n" + chunk
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="nova",
+            input=input_text
+        )
+        file_path = os.path.join(f"content/{index}/", f"audio_{i}.wav")
+        response.stream_to_file(file_path)
+        audio_files.append(file_path)
 
-    response.stream_to_file(audio_output_path)
+    # Convert audio files to WAV format
+    for i, file_path in enumerate(audio_files):
+        audio = AudioSegment.from_file(file_path)
+        audio.export(file_path, format="wav")
 
-    return audio_output_path
+    # Merge audio files
+    merged_file_path = os.path.join(f"content/{index}/", f"audio.wav")
+    merge_audio_files(audio_files, merged_file_path)
+
+    return merged_file_path
 
 
 
@@ -255,6 +349,7 @@ def get_audio_duration(file_path):
     return duration_in_seconds
 
 
+# ----------------- Master Database - Every Story to be Added ------------------
 
 def mongo_add(json_data):
     # Replace 'username' and 'password' with your actual values
@@ -283,48 +378,53 @@ def mongo_add(json_data):
     collection.insert_one(json_data)
     mongo_client.close()
 
+
+# ----------------- Story Word Counter ------------
+
 def count_words(text):
     words = text.split()  # Split the text into words
     return len(words)     # Return the number of words
 
-def start_specific(age, characters, scenario, positive_values, emotions, userId, lang):
-    print("Generating Story and Titles and Img Prompt...\n\n")
-    story_string = create_prompts(age, characters, scenario, positive_values, emotions, lang)
+
+# -----------------  Driver Code here -----------------
+
+def start_main_process(age, characters, scenario, positive_values, emotions, userId, story_lang):
+    print("\n\nGenerating Story and Titles and Img Prompt...\n\n")
+    openai_json_output = title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_values, emotions, story_lang)
     
     try:
-        story_dict = json.loads(story_string)
+        title_storyOutline_imgPrompt = json.loads(openai_json_output)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e}")
         return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 402"})
 
+    # unique story id generation
     index = str(uuid.uuid4())
     print("\n\nUUID generated !! --> ", index)
 
     try:
-        short_story = story_dict['story']
-        # story_with_slash_n = story_length_increaser(short_story)
-        story_with_slash_n = story_length_increaser(story_dict['image_prompt'])
-        story = re.sub(r'\\n', '<br>', story_with_slash_n)
-        title = story_dict['title']
+        story_with_slash_n = story_length_increaser(title_storyOutline_imgPrompt['image_prompt'])
+        story = re.sub(r'\\n', '<br>', story_with_slash_n)   # \n\n to <br><br>
+        title = title_storyOutline_imgPrompt['title']
+        # Handling of Vulgar Prompts
         if title.lower() == "error":
             return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 401"})
-        img_prompt = story_dict['image_prompt']
+        img_prompt = title_storyOutline_imgPrompt['image_prompt']
     except Exception as e:
         print(f"An error occurred: {e}")
         return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 502"})
     
-    thumb_img_path = compress_image(download_image(create_image(img_prompt), index))
+    thumb_img_path = save_img___from_link_to_local(create_image(img_prompt), index)
     timestamp = datetime.utcnow()
-    audio_path = convert_tts(story, index)
+    # audio_path = text_to_audio_generate(story, index)
+    audio_path = generate_speech(title, story, index)
     audio_duration = get_audio_duration(audio_path)
-
-
     story_length = count_words(story)
 
     json_data = {
         "_id": index,
         "story_word_count": story_length,
-        "lang": lang,
+        "lang": story_lang,
         "timestamp": timestamp,
         "userId": userId,
         "title" : title,
@@ -337,13 +437,16 @@ def start_specific(age, characters, scenario, positive_values, emotions, userId,
     mongo_add(json_data)
     return json_data
 
-# Create a Flask app
+
+# ------------------- Flask API Here ---------------------
 app = Flask(__name__)
 
+# Check Health
 @app.route('/api/', methods=['GET'])
 def index():
     return "Hello World !!!"
 
+# Generate Story
 @app.route('/api/generate_story', methods=['POST'])
 def storia_story_responce():
     try:
@@ -355,7 +458,7 @@ def storia_story_responce():
         userId = request.args.get('userId')
         lang = request.args.get('lang')
         print(characters)
-        response = start_specific(age, characters, scenario, positive_values, emotions, userId, lang)
+        response = start_main_process(age, characters, scenario, positive_values, emotions, userId, lang)
         return response
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -364,4 +467,3 @@ def storia_story_responce():
 # Run the Flask app
 if __name__ == '__main__':
     app.run()
-

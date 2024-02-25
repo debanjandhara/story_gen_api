@@ -1,4 +1,4 @@
-501 : An error occurred: Error code: 400 - {'error': {'message': '1 validation error for Request\nbody -> input\n  ensure this value has at most 4096 characters (type=value_error.any_str.max_length; limit_value=4096)', 'type': 'invalid_request_error', 'param': None, 'code': None}}
+501 : Audio Generation Error - Lengthy Response
 401 : Check your Parameters
 402 : Error decoding OpenAI JSON Response (Error Generating Story by OpenAI / Parsing Error)
 502 : Error generating image / Audio
