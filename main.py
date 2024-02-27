@@ -44,48 +44,13 @@ def title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_
         prompt_template = f"""
 If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else.
 
-Generate a very lengthy children's story in french of about atleast 1000 words for story only and a title for :
+Créez-moi un plan d'histoire de 2000 mots en français, âge : {age}, Nom : {characters}, Scénario : {scenario}, émotion : {emotions}, valeur : {positive_values}.
 
-Titre : [Titre personnalisé lié au scénario et aux personnages]
-
-Tranche d'Âge Cible : {age} Créez des histoires adaptées à la tranche d'âge spécifiée, en veillant à ce que les émotions et les valeurs positives soient intégrales à l'histoire.
-
-Style et Ton : Adapté au scénario choisi.
-
-Personnages Principaux : {characters} [Nom et genre. Utilisez les émotions et les valeurs pour façonner leur personnalité et leur rôle.]
-
-Cadre et Scénario : {scenario} Développez un monde autour du scénario fourni.
-
-Valeurs Positives : {positive_values}
-
-Émotions à Explorer : {emotions}
-
-Développement de l'Histoire :
-1. Introduction des Personnages et du Monde : Description captivante et détaillée.
-2. Profondeur des Personnages : Explorez leurs antécédents, {emotions}, et {positive_values}.
-3. Introduction d'un Problème ou Défi : Un défi unique dans leur monde, décrit en profondeur.
-4. Descriptions Riches : Environnements, situations et interactions détaillés.
-5. Plusieurs Tentatives de Résolution : Différentes méthodes pour résoudre le problème, chacune décrite en détail.
-6. Introduction de Personnages Secondaires : Personnages supplémentaires qui enrichissent l'intrigue, avec des antécédents et des rôles détaillés.
-7. Plus de Rebondissements : Chaque nouveau rebondissement, tournant et développement doit être minutieusement détaillé, pas juste mentionné superficiellement.
-8. Conflits Internes et Externes : Conflits émotionnels et physiques, explorés de manière élaborée.
-9. Détails du Voyage : Si applicable, décrivez le voyage en détail.
-10. Sous-intrigues : Histoires secondaires liées à la narrative principale, chacune développée de manière approfondie.
-11. Nouveau Rebondissement ou Obstacle : Un élément inattendu ou un nouveau défi, décrit en détail.
-12. Résolution et Conclusion : Résolvez le problème, changements et apprentissages des personnages, tout décrit en profondeur.
-13. Conclusion Étendue : Réfléchissez sur les leçons apprises et l'évolution des personnages, en tenant compte de tous les événements détaillés de l'histoire.
-
-Directives Supplémentaires :
-- Évitez la violence explicite, les thèmes effrayants ou le contenu inapproprié.
-- Adaptez les scènes, dialogues et descriptions à la tranche d'âge.
-- Rendez l'histoire immersive et captivante.
-
-Exigence de Longueur :
-- L'histoire doit être longue et continue, avec un minimum de 1000 mots, fournissant une expérience narrative complète et engageante.
-
-Fournissez également une description détaillée de l'image pour le générateur d'images IA, avec chaque petit détail (max 100 mots).
-
-Utilisez ce format de liste python pour la sortie et échappez les caractères spéciaux, afin que je puisse utiliser directement la réponse.
+Message Système :
+Votre rôle est de créer des histoires longues, captivantes et uniques pour captiver les lecteurs, en particulier les jeunes, dans un monde imaginaire. 
+Efforcez-vous de concevoir des récits qui non seulement divertissent mais aussi éduquent et inspirent, en mettant un accent sur les valeurs. 
+Votre objectif est de produire des histoires de 1000 mots qui sont adaptées pour le groupe d'âge cible de <âge> ans, 
+sans vulgarité ni violence explicite, pour assurer une expérience de lecture appropriée et agréable.
 
 Use this python list format for output and make the response to escape special characters, so that i can directly use the response, and keep the "title", "story" and the "image_prompt" ; the keys of the json in english...
 
@@ -100,44 +65,13 @@ Use this python list format for output and make the response to escape special c
 
 If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else.
 
-Generate a very lengthy children's story of about atleast 1000 words for story only and a title for :
+Create for me title and a story outline of 2000 words in English, age: {age}, Name: {characters}, Scenario: {scenario}, emotion: {emotions}, value: {positive_values}.
 
-Title: [Custom title related to the scenario and characters]
-
-Target Age Range: {age} Create stories tailored to the specified age range.
-
-Style and Tone: Adapted to the chosen scenario.
-
-Main Characters: {characters} [Name and gender. Use the emotions and values to shape their personality and role.]
-
-Setting and Scenario: {scenario} Develop a world around the provided scenario.
-
-Positive Values: {positive_values}
-
-Emotions to Explore: {emotions}
-
-Story Development:
-1. Introduction of Characters and World: Captivating and detailed description.
-2. Character Depth: Explore their backgrounds, dreams, fears, and motivations.
-3. Introduction of a Problem or Challenge: A unique challenge in their world.
-4. Rich Descriptions: Detailed environments, situations, and interactions.
-5. Multiple Resolution Attempts: Different methods to solve the problem.
-6. Introduction of Secondary Characters: Additional characters that enrich the plot.
-7. More Twists and Turns: Unexpected obstacles and developments.
-8. Internal and External Conflicts: Emotional and physical conflicts.
-9. Journey Details: If applicable, describe the journey in detail.
-10. Subplots: Secondary stories related to the main narrative.
-11. New Twist or Obstacle: An unexpected element or new challenge.
-12. Resolution and Conclusion: Solve the problem, changes and learnings of the characters.
-13. Extended Conclusion: Reflect on the lessons learned and the evolution of the characters.
-
-Additional Guidelines:
-- Avoid explicit violence, frightening themes, or inappropriate content.
-- Adapt scenes, dialogues, and descriptions to the age range.
-- Make the story immersive and captivating.
-
-Length Requirement:
-- The story should be long and continuous, with a minimum of 1000 words, providing a comprehensive and engaging narrative experience.
+System Message:
+Your role is to create long, captivating, and unique stories to engage readers, especially young ones, in an imaginative world. 
+Strive to design narratives that not only entertain but also educate and inspire, with an emphasis on values. 
+Your goal is to produce 1000-word stories that are suitable for the target age group <age> years old, 
+without vulgarity or explicit violence, to ensure an appropriate and enjoyable reading experience.
 
 Also provide a descriptive image prompt (max 100 words) for ai image generator, with every small details.
 
@@ -169,7 +103,7 @@ Use this python list format for output and make the response to escape special c
 # ------------------------  Story Outline --> Lengthy Story --------------------------
 
 def story_length_increaser(story, lang):
-    prompt_template = f""" This is a outline of a story : \"{story}\" . Please make sure the story is expanded to atleast 1000 words. Expand this story with no title for 10 paragraph. Each paragraph containing 120 words. Please make it lengthy. 
+    prompt_template = f""" This is a outline of a story : \"{story}\" . Please make sure the story is expanded to about 2000 words. Expand this story with no title for 10 paragraph. Each paragraph containing 120 words. Please make it lengthy. 
  Output the story in {lang} language."""
 
     from openai import OpenAI
