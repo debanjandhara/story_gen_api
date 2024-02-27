@@ -168,9 +168,9 @@ Use this python list format for output and make the response to escape special c
 
 # ------------------------  Story Outline --> Lengthy Story --------------------------
 
-def story_length_increaser(story):
+def story_length_increaser(story, lang):
     prompt_template = f""" This is a outline of a story : \"{story}\" . Please make sure the story is expanded to atleast 1000 words. Expand this story with no title for 10 paragraph. Each paragraph containing 120 words. Please make it lengthy. 
-"""
+ Output the story in {lang} language."""
 
     from openai import OpenAI
     client = OpenAI()
@@ -180,7 +180,7 @@ def story_length_increaser(story):
       max_tokens=2000,
     #   response_format={ "type": "json_object" },
       messages=[
-        {"role": "system", "content": "You are a chatbot that provides a long lengthy response."},
+        {"role": "system", "content": f"You are a {lang} chatbot that provides a long lengthy response."},
         {"role": "user", "content": f"{prompt_template}"}
       ]
     )
@@ -412,7 +412,7 @@ def start_main_process(age, characters, scenario, positive_values, emotions, use
     print("\n\nUUID generated !! --> ", index)
 
     try:
-        story_with_slash_n = story_length_increaser(title_storyOutline_imgPrompt['image_prompt'])
+        story_with_slash_n = story_length_increaser(title_storyOutline_imgPrompt['image_prompt'], story_lang)
         story = re.sub(r'\\n', '<br>', story_with_slash_n)   # \n\n to <br><br>
         title = title_storyOutline_imgPrompt['title']
         # Handling of Vulgar Prompts
