@@ -41,8 +41,11 @@ def title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_
     # -------  Prompt for FRENCH Story generation -----------------
     
     if lang=="french":
+
+        # Prompt To be added Later
+        vulgar_prompt_for_french = f"""If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else."""
+        
         prompt_template = f"""
-If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else.
 
 Créez-moi un plan d'histoire de 2000 mots en français, âge : {age}, Nom : {characters}, Scénario : {scenario}, émotion : {emotions}, valeur : {positive_values}.
 
@@ -60,10 +63,12 @@ Use this python list format for output and make the response to escape special c
     else:
         
         # --------------------  Prompt for other (ENGLISH) language  -----------------------------
+
+        # Prompt To be added Later
+        vulgar_prompt_for_english = f"""
+If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else."""
         
         prompt_template = f"""
-
-If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else.
 
 Create for me title and a story outline of 2000 words in English, age: {age}, Name: {characters}, Scenario: {scenario}, emotion: {emotions}, value: {positive_values}.
 
