@@ -52,12 +52,12 @@ Créez-moi un plan d'histoire de 2000 mots en français, âge : {age}, Nom : {ch
 Message Système :
 Votre rôle est de créer des histoires longues, captivantes et uniques pour captiver les lecteurs, en particulier les jeunes, dans un monde imaginaire. 
 Efforcez-vous de concevoir des récits qui non seulement divertissent mais aussi éduquent et inspirent, en mettant un accent sur les valeurs. 
-Votre objectif est de produire des histoires de 1000 mots qui sont adaptées pour le groupe d'âge cible de <âge> ans, 
+Votre objectif est de produire des histoires de 1000 mots qui sont adaptées pour le groupe d'âge cible de {age} ans, 
 sans vulgarité ni violence explicite, pour assurer une expérience de lecture appropriée et agréable.
 
 Use this python list format for output and make the response to escape special characters, so that i can directly use the response, and keep the "title", "story" and the "image_prompt" ; the keys of the json in english...
 
-{{"title": "<title_here_in_string_format>", "story": "<story_here_in_string_format>", "image_prompt": "<image_prompt_here_in_string_format>"}}
+{{"title": "<title_here_in_string_format>", "story": "<story_here_in_string_format>"}}
 """
     
     else:
@@ -75,14 +75,12 @@ Create for me title and a story outline of 2000 words in English, age: {age}, Na
 System Message:
 Your role is to create long, captivating, and unique stories to engage readers, especially young ones, in an imaginative world. 
 Strive to design narratives that not only entertain but also educate and inspire, with an emphasis on values. 
-Your goal is to produce 1000-word stories that are suitable for the target age group <age> years old, 
+Your goal is to produce 1000-word stories that are suitable for the target age group {age} years old, 
 without vulgarity or explicit violence, to ensure an appropriate and enjoyable reading experience.
-
-Also provide a descriptive image prompt (max 100 words) for ai image generator, with every small details.
 
 Use this python list format for output and make the response to escape special characters, so that i can directly use the response.
 
-{{"title": <title_here_in_string_format>, "story": <story_here_in_string_format>, "image_prompt": <image_prompt_here_in_string_format>}}
+{{"title": <title_here_in_string_format>, "story": <story_here_in_string_format>}}
 """
 
     # ----------------  OPENAI Generation Code LLM ----------------------
@@ -107,9 +105,8 @@ Use this python list format for output and make the response to escape special c
 
 # ------------------------  Story Outline --> Lengthy Story --------------------------
 
-def story_length_increaser(story, lang):
-    prompt_template = f""" This is a outline of a story : \"{story}\" . Please make sure the story is expanded to about 2000 words. Expand this story with no title for 10 paragraph. Each paragraph containing 120 words. Please make it lengthy. 
- Output the story in {lang} language."""
+def story_length_increaser(story, age, characters, scenario, positive_values, emotions, lang):
+    prompt_template = f"""Using the created outline : \"{story}\", develop a long, captivating story in {lang} by detailing the different adventures. Develop a 2000-word story for an {age}-year-old named {characters}, set in {scenario},, with emotions of {emotions}, and the values of {positive_values}."""
 
     from openai import OpenAI
     client = OpenAI()
@@ -129,7 +126,27 @@ def story_length_increaser(story, lang):
     return response.choices[0].message.content
 
 
-# ------------------------- Image Prompt --> Image File ---------------------------
+# ------------------------- Image Prompt & Image File ---------------------------
+
+def image_prompt_generator(story):
+    prompt_template = f""" Generate a descriptive image prompt for the story and in the prompt give a detailed description about everything.  This is the Story :  \"{story}\"."""
+
+    from openai import OpenAI
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+      model="gpt-3.5-turbo-0125",
+      max_tokens=2000,
+    #   response_format={ "type": "json_object" },
+      messages=[
+        {"role": "system", "content": f"You are a image prompt generator for an AI Image Generator."},
+        {"role": "user", "content": f"{prompt_template}"}
+      ]
+    )
+    
+    print("Image Prompt :\n",response.choices[0].message.content,"\n-----------------------------------------------\n")
+
+    return response.choices[0].message.content
 
 def create_image(prompt):
 
@@ -341,7 +358,7 @@ def start_main_process(age, characters, scenario, positive_values, emotions, use
     openai_json_output = title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_values, emotions, story_lang)
     
     try:
-        title_storyOutline_imgPrompt = json.loads(openai_json_output)
+        title_storyOutline = json.loads(openai_json_output)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e}")
         return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 402"})
@@ -351,13 +368,13 @@ def start_main_process(age, characters, scenario, positive_values, emotions, use
     print("\n\nUUID generated !! --> ", index)
 
     try:
-        story_with_slash_n = story_length_increaser(title_storyOutline_imgPrompt['image_prompt'], story_lang)
+        story_with_slash_n = story_length_increaser(title_storyOutline['story'], story_lang)
         story = re.sub(r'\\n', '<br>', story_with_slash_n)   # \n\n to <br><br>
-        title = title_storyOutline_imgPrompt['title']
+        title = title_storyOutline['title']
         # Handling of Vulgar Prompts
         if title.lower() == "error":
             return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 401"})
-        img_prompt = title_storyOutline_imgPrompt['image_prompt']
+        img_prompt = image_prompt_generator(story)
     except Exception as e:
         print(f"An error occurred: {e}")
         return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 502"})
