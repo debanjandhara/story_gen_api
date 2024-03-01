@@ -368,7 +368,7 @@ def start_main_process(age, characters, scenario, positive_values, emotions, use
     print("\n\nUUID generated !! --> ", index)
 
     try:
-        story_with_slash_n = story_length_increaser(title_storyOutline['story'], story_lang)
+        story_with_slash_n = story_length_increaser(title_storyOutline['story'], age, characters, scenario, positive_values, emotions, story_lang)
         story = re.sub(r'\\n', '<br>', story_with_slash_n)   # \n\n to <br><br>
         title = title_storyOutline['title']
         # Handling of Vulgar Prompts
