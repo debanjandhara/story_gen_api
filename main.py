@@ -279,8 +279,11 @@ def generate_speech(title, story, index):
     # Generate speech for each chunk
     audio_files = []
     response = None  # Initialize response variable outside the loop
+    audio_story_chunk_count = 0
     for i, chunk in enumerate(story_chunks):
-        input_text = title + "\n\n\n\n\n\n\n\n" + chunk
+        audio_story_chunk_count += 1
+        # input_text = title + "\n\n\n\n\n\n\n\n" + chunk
+        input_text = chunk + "\n\n\n\n\n\n\n\n"
         response = client.audio.speech.create(
             model="tts-1",
             voice="nova",
