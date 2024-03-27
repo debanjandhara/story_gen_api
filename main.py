@@ -153,7 +153,7 @@ def create_image(prompt):
     from openai import OpenAI
     client = OpenAI()
 
-    prompt_template = f"{prompt}; cartoon, 8k, rtx, photorealism, without ever writing any text, or having inappropriate imagery for children, with vibrant colors of purple, blue, and white"
+    prompt_template = f"{prompt}; 8k, ray tracing, photorealism, Without ever writing any text, or having inappropriate imagery for children, peaceful nighttime landscape with vibrant colors of purple, blue, and white. The starry sky is adorned with a bright crescent moon."
 
     response = client.images.generate(
       model="dall-e-3",
