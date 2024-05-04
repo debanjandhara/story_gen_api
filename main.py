@@ -47,15 +47,9 @@ def title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_
         
         prompt_template = f"""
 
-Créez-moi un plan d'histoire de 2000 mots en français, âge : {age}, Nom : {characters}, Scénario : {scenario}, émotion : {emotions}, valeur : {positive_values}.
+Prompt de Plan d'Histoire : Concevez un titre et un plan pour une histoire captivante de 2000 mots convenant aux enfants âgés de {age}. Orientez le récit autour des personnages {characters}, qui peuvent être seuls ou plusieurs, confrontés à un événement déterminant dans {scenario}, éveillant une émotion profonde de {emotions}. Cet événement les incite à viser un but qui incarne la valeur de {positive_values}. Décrivez en détail les défis et péripéties de l'aventure, en mettant en lumière comment {characters} affrontent et tirent des leçons de ces épreuves, reflétant ainsi subtilement {emotions} et {positive_values}. Veillez à ce que le plan soit sans vulgarité ni violence explicite, et qu'il soit soigneusement conçu pour captiver et éduquer le groupe d'âge visé.
 
-Message Système :
-Votre rôle est de créer des histoires longues, captivantes et uniques pour captiver les lecteurs, en particulier les jeunes, dans un monde imaginaire. 
-Efforcez-vous de concevoir des récits qui non seulement divertissent mais aussi éduquent et inspirent, en mettant un accent sur les valeurs. 
-Votre objectif est de produire des histoires de 1000 mots qui sont adaptées pour le groupe d'âge cible de {age} ans, 
-sans vulgarité ni violence explicite, pour assurer une expérience de lecture appropriée et agréable.
-
-Use this python list format for output and make the response to escape special characters, so that i can directly use the response, and keep the "title", "story" and the "image_prompt" ; the keys of the json in english...
+Use this python list format for output and make the response to escape special characters, so that i can directly use the response, and keep the "title" and "story" ; the keys of the json in english...
 
 {{"title": "<title_here_in_string_format>", "story": "<story_here_in_string_format>"}}
 """
@@ -68,19 +62,15 @@ Use this python list format for output and make the response to escape special c
         vulgar_prompt_for_english = f"""
 If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" are vulger for a kid, then only return : {{"title": "error"}} and nothing else."""
         
+        
         prompt_template = f"""
 
-Create for me title and a story outline of 2000 words in English, age: {age}, Name: {characters}, Scenario: {scenario}, emotion: {emotions}, value: {positive_values}.
-
-System Message:
-Your role is to create long, captivating, and unique stories to engage readers, especially young ones, in an imaginative world. 
-Strive to design narratives that not only entertain but also educate and inspire, with an emphasis on values. 
-Your goal is to produce 1000-word stories that are suitable for the target age group {age} years old, 
-without vulgarity or explicit violence, to ensure an appropriate and enjoyable reading experience.
+Craft an outline and the title for a captivating 2000-word story suitable for children aged {age}. Center the narrative around {characters}, a protagonist(s) who encounters a pivotal event in {scenario}, sparking a profound sense of {emotions}. This event leads {characters} to pursue a goal that represents {positive_values}. Detail each challenge or twist in the adventure, making sure to vividly depict how {characters} confronts and learns from these moments, thereby subtly illustrating {emotions} and {positive_values}. Ensure the outline is free from vulgarity and explicit violence, and is thoughtfully tailored to engage and inspire the target age group.
 
 Use this python list format for output and make the response to escape special characters, so that i can directly use the response.
 
 {{"title": <title_here_in_string_format>, "story": <story_here_in_string_format>}}
+
 """
 
     # ----------------  OPENAI Generation Code LLM ----------------------
@@ -106,7 +96,12 @@ Use this python list format for output and make the response to escape special c
 # ------------------------  Story Outline --> Lengthy Story --------------------------
 
 def story_length_increaser(story, age, characters, scenario, positive_values, emotions, lang):
-    prompt_template = f"""Using the created outline : \"{story}\", develop a long, captivating story in {lang} by detailing the different adventures. Develop a 2000-word story for an {age}-year-old named {characters}, set in {scenario},, with emotions of {emotions}, and the values of {positive_values}."""
+    
+    prompt_template = f"""
+    
+    Using previously crafted story outline : \"{story}\", write a detailed 2000-word story in {lang}. Feature {characters}, whether solo or as a group, in {scenario}. Provide in-depth descriptions for each twist and turn they encounter, outlining the events, the characters\' responses, and how each situation is resolved. Emphasize how {characters} embodies {positive_values} and experiences {emotions} throughout these challenges. The story should be age-appropriate for {age}, rich in engaging details, and free from any vulgarity or violence.
+
+"""
 
     from openai import OpenAI
     client = OpenAI()
