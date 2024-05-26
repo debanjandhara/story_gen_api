@@ -47,7 +47,9 @@ def title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_
         
         prompt_template = f"""
 
-Prompt de Plan d'Histoire : Concevez un titre et un plan intéressants et uniques pour une histoire captivante de 2000 mots adaptée aux enfants âgés de {age}. Orientez le récit autour des personnages {characters}, qui peuvent être seuls ou plusieurs, confrontés à un événement déterminant dans {scenario}, éveillant une émotion profonde de {emotions}. Cet événement les incite à viser un but qui incarne la valeur de {positive_values}. Décrivez en détail les défis et péripéties de l'aventure, en mettant en lumière comment {characters} affrontent et tirent des leçons de ces épreuves, reflétant ainsi subtilement {emotions} et {positive_values}. Veillez à ce que le plan soit sans vulgarité ni violence explicite, et qu'il soit soigneusement conçu pour captiver et éduquer le groupe d'âge visé.
+Outline Détaillé de l'Histoire  Introduction du Personnage: {characters}, {age} ans, caractérisé(e) par les émotions {emotions} et motivé(e) par les valeurs {positive_values}. Contexte initial soulignant comment {characters} est impliqué(e) dans le scénario {scenario}. Situation Initiale et Cadre: Description détaillée de l'environnement où {characters} commence son aventure. Présentation des acteurs secondaires clés et leur relation initiale avec {characters}. Développement du Conflit et Obstacles: Obstacle 1: Description d'un défi physique ou mental que {characters} doit surmonter. Inclure les détails de l'obstacle et comment il est directement lié à {scenario}. Énigme 1: Présentation d'une énigme complexe qui doit être résolue pour progresser. Détail des indices disponibles et processus de réflexion de {characters} pour la résoudre. Interactions Dynamiques: Exploration approfondie des relations entre {characters} et les autres personnages, montrant comment ces interactions sont influencées par {emotions} et comment elles évoluent tout au long de l'histoire. Chaque interaction importante doit refléter ou tester les valeurs {positive_values} de {characters}. Apogée: Description du moment le plus intense du conflit, où {characters} est confronté(e) à un choix crucial ou à un ultime défi. Détails sur la manière dont {characters} utilise ses émotions {emotions} et ses valeurs {positive_values} pour naviguer dans cette situation. Résolution: Comment {characters} résout le conflit principal, détaillant les étapes spécifiques et les décisions prises. Impact de la résolution sur {characters} et les autres personnages principaux. Conclusion: Synthèse de ce que {characters} a appris à travers cette aventure. Effets à long terme des actions de {characters} sur l'environnement et le contexte initial.
+
+Generate a Captivating, and Interesting title (not a generic one) , based on this outline in french.
 
 Rule (Don't Ignore) : Use this python dictionary format for output and make the response to escape special characters, so that i can directly use the response, and keep the "title" and "story" ; the keys of the json in english...
 
@@ -65,7 +67,26 @@ If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" a
         
         prompt_template = f"""
 
-Craft an outline and an interesting and unique title for a captivating 2000-word story suitable for children aged {age}. Center the narrative around {characters}, a protagonist(s) who encounters a pivotal event in {scenario}, sparking a profound sense of {emotions}. This event leads {characters} to pursue a goal that represents {positive_values}. Detail each challenge or twist in the adventure, making sure to vividly depict how {characters} confronts and learns from these moments, thereby subtly illustrating {emotions} and {positive_values}. Ensure the outline is free from vulgarity and explicit violence, and is thoughtfully tailored to engage and inspire the target age group.
+Detailed Story Outline:
+
+Character Introduction: {characters}, {age} years old, characterized by the emotions {emotions} and motivated by the values {positive_values}. Initial context highlighting how {characters} is involved in the scenario {scenario}.
+
+Initial Situation and Setting: Detailed description of the environment where {characters} begins their adventure. Introduction of key secondary characters and their initial relationship with {characters}.
+
+Conflict Development and Obstacles:
+
+- Obstacle 1: Description of a physical or mental challenge that {characters} must overcome. Include details of the obstacle and how it is directly related to {scenario}.
+- Puzzle 1: Introduction of a complex puzzle that must be solved to progress. Detail the available clues and the thought process of {characters} to solve it.
+
+Dynamic Interactions: In-depth exploration of the relationships between {characters} and other characters, showing how these interactions are influenced by {emotions} and how they evolve throughout the story. Each important interaction should reflect or test the {positive_values} of {characters}.
+
+Climax: Description of the most intense moment of the conflict, where {characters} faces a crucial choice or an ultimate challenge. Details on how {characters} uses their {emotions} and {positive_values} to navigate this situation.
+
+Resolution: How {characters} resolves the main conflict, detailing the specific steps and decisions taken. Impact of the resolution on {characters} and the other main characters.
+
+Conclusion: Synthesis of what {characters} has learned through this adventure. Long-term effects of {characters}' actions on the environment and initial context.
+
+Generate a Captivating, and Interesting title (not a generic one) , based on this outline.
 
 Rule (Don't Ignore) : Use this python dictionary format for output and make the response to escape special characters, so that i can directly use the response.
 
@@ -98,12 +119,43 @@ Rule (Don't Ignore) : Use this python dictionary format for output and make the 
 # ------------------------  Story Outline --> Lengthy Story --------------------------
 
 def story_length_increaser(story, age, characters, scenario, positive_values, emotions, lang):
+
+    if lang == "french":
     
-    prompt_template = f"""
+        prompt_template = f"""
     
-    Using previously crafted story outline : \"{story}\", write a detailed atleast 2000-word story in {lang}. Feature {characters}, whether solo or as a group, in {scenario}. Provide in-depth descriptions for each twist and turn they encounter, outlining the events, the characters\' responses, and how each situation is resolved. Provide climax and thriller in the story. Emphasize how {characters} embodies {positive_values} and experiences {emotions} throughout these challenges. The story should be age-appropriate for {age}, rich in engaging details, and free from any vulgarity or violence.
+    Prompt pour Générer une Histoire de 2000 Mots  En utilisant l'outline généré, créez-moi une histoire de 2000 mots qui plonge le lecteur dans un univers captivant et unique. Débutez par décrire le cadre de l'histoire de manière vivante et détaillée, en faisant appel à l'imagination des jeunes lecteurs. Introduisez les personnages principaux en soulignant leurs traits de caractère distinctifs, leurs motivations profondes, et la manière dont ils se rapportent à leur monde.  Faites démarrer l'aventure avec un événement qui pousse les personnages hors de leur zone de confort, les lançant sur le chemin de la découverte et du défi. Tissez le récit autour d'une série de péripéties qui testent leurs limites, les font grandir et révèlent progressivement les émotions et les valeurs clés que vous souhaitez explorer, telles que le courage, l'amitié, la persévérance, et la curiosité.  Pour chaque quête donnée par l'outline, développez-la en décrivant comment les personnages gèrent et surmontent ces défis en détail. Ne traversez pas ces quêtes rapidement; plongez profondément dans chaque action, décrivant comment ils ont fait face à chaque situation, enrichissant ainsi le récit avec des descriptions vivantes et des réflexions approfondies sur leurs expériences.  Construisez l'histoire en veillant à ce que chaque scène contribue à l'avancement du récit vers son apogée, un moment de tension dramatique où les personnages font face à leur plus grand défi, mettant en jeu les leçons apprises au cours de leur voyage. Assurez-vous que la résolution de l'histoire est à la fois satisfaisante et porteuse de sens, reflétant les valeurs positives et offrant une conclusion qui encourage à la réflexion personnelle.  Intégrez des éléments narratifs enrichissants comme des jeux de langage, des dialogues, un rythme engageant, et des interactions imaginatives avec le lecteur pour rendre la lecture ou l'écoute de l'histoire plus dynamique et immersive. L'histoire devrait non seulement divertir mais aussi éduquer et inspirer les jeunes lecteurs, en les invitant à voir le monde sous un jour nouveau.  Tout au long du récit, maintenez un langage adapté à l'âge cible, en évitant toute vulgarité ou violence explicite, pour assurer que l'histoire soit appropriée et agréable pour un public enfantin. Finalement, concluez l'histoire de manière à laisser une impression durable, encourager l'imagination, et inspirer les jeunes esprits à rêver grand.  Instructions Supplémentaires:  Assurez-vous que le récit atteint un minimum de 2000 mots pour une expérience de lecture complète. L'histoire doit être fluide et cohérente, avec une transition naturelle entre les scènes et les événements. Le titre de l'histoire doit capturer l'essence du récit et intriguer le lecteur dès le début. Je souhaite que l'histoire soit générée sans commentaire supplémentaire , sans titre a l'histoire et qu'elle se termine par 'Fin.' . Voici le plan de l'histoire : \"{story}\"
 
     Rule (Don't Ignore) : Just Provide Only the Story body as string, with no title or anything extra like chapters.
+
+"""
+
+    else:
+
+        prompt_template = f"""
+
+Prompt for Generating a 2000-Word Story
+
+Using the generated outline, create a 2000-word story that immerses the reader in a captivating and unique universe. Start by vividly and detailedly describing the story's setting, appealing to the imagination of young readers. Introduce the main characters by highlighting their distinctive traits, deep motivations, and how they relate to their world.
+
+Begin the adventure with an event that pushes the characters out of their comfort zone, launching them on a path of discovery and challenge. Weave the narrative around a series of events that test their limits, make them grow, and gradually reveal the key emotions and values you wish to explore, such as courage, friendship, perseverance, and curiosity.
+
+For each quest given by the outline, develop it by describing in detail how the characters handle and overcome these challenges. Do not rush through these quests; delve deeply into each action, describing how they faced each situation, thus enriching the narrative with vivid descriptions and in-depth reflections on their experiences.
+
+Build the story ensuring that each scene contributes to advancing the narrative towards its climax, a moment of dramatic tension where the characters face their greatest challenge, putting into play the lessons learned during their journey. Ensure that the story's resolution is both satisfying and meaningful, reflecting positive values and offering a conclusion that encourages personal reflection.
+
+Integrate enriching narrative elements such as wordplay, dialogues, engaging rhythm, and imaginative interactions with the reader to make the reading or listening experience more dynamic and immersive. The story should not only entertain but also educate and inspire young readers, inviting them to see the world in a new light.
+
+Throughout the narrative, maintain language appropriate to the target age, avoiding any vulgarity or explicit violence, to ensure the story is suitable and enjoyable for a child audience. Finally, conclude the story in a way that leaves a lasting impression, encourages imagination, and inspires young minds to dream big.
+
+Additional Instructions:
+
+Ensure that the narrative reaches a minimum of 2000 words for a complete reading experience. The story should be fluid and coherent, with natural transitions between scenes and events. The title of the story should capture the essence of the narrative and intrigue the reader from the start. I want the story to be generated without additional commentary, without a title, and to end with 'The End.'
+
+This is the story outline : \"{story}\"
+
+
+
 
 """
 
