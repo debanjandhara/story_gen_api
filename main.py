@@ -81,8 +81,8 @@ Rule (Don't Ignore) : Use this python dictionary format for output and make the 
     response = client.chat.completions.create(
       model="gpt-4o-2024-05-13",
       max_tokens=4000,
-      seed = None
-      temperature = 0.7
+      seed = None,
+      temperature = 0.7,
       response_format={ "type": "json_object" },
       messages=[
         {"role": "system", "content": "You are a very lengthy elaborative story teller, with a lot of twist and turn and morals. Give the output in json."},
@@ -113,8 +113,8 @@ def story_length_increaser(story, age, characters, scenario, positive_values, em
     response = client.chat.completions.create(
       model="gpt-4o-2024-05-13",
       max_tokens=4000,
-      seed = None
-      temperature = 0.7
+      seed = None,
+      temperature = 0.7,
     #   response_format={ "type": "json_object" },
       messages=[
         {"role": "system", "content": f"You are a {lang} chatbot that provides a long lengthy response."},
@@ -138,8 +138,8 @@ def image_prompt_generator(story):
     response = client.chat.completions.create(
       model="gpt-4o-2024-05-13",
       max_tokens=4000,
-      seed = None
-      temperature = 0.7
+      seed = None,
+      temperature = 0.7,
     #   response_format={ "type": "json_object" },
       messages=[
         {"role": "system", "content": f"You are a image prompt generator for an AI Image Generator."},
