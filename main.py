@@ -47,9 +47,9 @@ def title_storyOutline_imgPrompt_generation(age, characters, scenario, positive_
         
         prompt_template = f"""
 
-Prompt de Plan d'Histoire : Concevez un titre et un plan pour une histoire captivante de 2000 mots convenant aux enfants âgés de {age}. Orientez le récit autour des personnages {characters}, qui peuvent être seuls ou plusieurs, confrontés à un événement déterminant dans {scenario}, éveillant une émotion profonde de {emotions}. Cet événement les incite à viser un but qui incarne la valeur de {positive_values}. Décrivez en détail les défis et péripéties de l'aventure, en mettant en lumière comment {characters} affrontent et tirent des leçons de ces épreuves, reflétant ainsi subtilement {emotions} et {positive_values}. Veillez à ce que le plan soit sans vulgarité ni violence explicite, et qu'il soit soigneusement conçu pour captiver et éduquer le groupe d'âge visé.
+Prompt de Plan d'Histoire : Concevez un titre et un plan intéressants et uniques pour une histoire captivante de 2000 mots adaptée aux enfants âgés de {age}. Orientez le récit autour des personnages {characters}, qui peuvent être seuls ou plusieurs, confrontés à un événement déterminant dans {scenario}, éveillant une émotion profonde de {emotions}. Cet événement les incite à viser un but qui incarne la valeur de {positive_values}. Décrivez en détail les défis et péripéties de l'aventure, en mettant en lumière comment {characters} affrontent et tirent des leçons de ces épreuves, reflétant ainsi subtilement {emotions} et {positive_values}. Veillez à ce que le plan soit sans vulgarité ni violence explicite, et qu'il soit soigneusement conçu pour captiver et éduquer le groupe d'âge visé.
 
-Use this python list format for output and make the response to escape special characters, so that i can directly use the response, and keep the "title" and "story" ; the keys of the json in english...
+Rule (Don't Ignore) : Use this python dictionary format for output and make the response to escape special characters, so that i can directly use the response, and keep the "title" and "story" ; the keys of the json in english...
 
 {{"title": "<title_here_in_string_format>", "story": "<story_here_in_string_format>"}}
 """
@@ -65,9 +65,9 @@ If these words : \" {characters}, {scenario}, {positive_values}, {emotions} \" a
         
         prompt_template = f"""
 
-Craft an outline and the title for a captivating 2000-word story suitable for children aged {age}. Center the narrative around {characters}, a protagonist(s) who encounters a pivotal event in {scenario}, sparking a profound sense of {emotions}. This event leads {characters} to pursue a goal that represents {positive_values}. Detail each challenge or twist in the adventure, making sure to vividly depict how {characters} confronts and learns from these moments, thereby subtly illustrating {emotions} and {positive_values}. Ensure the outline is free from vulgarity and explicit violence, and is thoughtfully tailored to engage and inspire the target age group.
+Craft an outline and an interesting and unique title for a captivating 2000-word story suitable for children aged {age}. Center the narrative around {characters}, a protagonist(s) who encounters a pivotal event in {scenario}, sparking a profound sense of {emotions}. This event leads {characters} to pursue a goal that represents {positive_values}. Detail each challenge or twist in the adventure, making sure to vividly depict how {characters} confronts and learns from these moments, thereby subtly illustrating {emotions} and {positive_values}. Ensure the outline is free from vulgarity and explicit violence, and is thoughtfully tailored to engage and inspire the target age group.
 
-Use this python list format for output and make the response to escape special characters, so that i can directly use the response.
+Rule (Don't Ignore) : Use this python dictionary format for output and make the response to escape special characters, so that i can directly use the response.
 
 {{"title": <title_here_in_string_format>, "story": <story_here_in_string_format>}}
 
@@ -79,7 +79,7 @@ Use this python list format for output and make the response to escape special c
     client = OpenAI()
 
     response = client.chat.completions.create(
-      model="gpt-3.5-turbo-0125",
+      model="gpt-4o-2024-05-13",
       max_tokens=2000,
       response_format={ "type": "json_object" },
       messages=[
@@ -88,7 +88,7 @@ Use this python list format for output and make the response to escape special c
       ]
     )
     
-    print("Title + Story Outine + Img Prompt --- Direct Response :\n",response,"\n-----------------------------------------------\n")
+    print("Title + Story Outine --- Direct Response :\n",response,"\n-----------------------------------------------\n")
 
     return response.choices[0].message.content
 
@@ -99,7 +99,9 @@ def story_length_increaser(story, age, characters, scenario, positive_values, em
     
     prompt_template = f"""
     
-    Using previously crafted story outline : \"{story}\", write a detailed 2000-word story in {lang}. Feature {characters}, whether solo or as a group, in {scenario}. Provide in-depth descriptions for each twist and turn they encounter, outlining the events, the characters\' responses, and how each situation is resolved. Emphasize how {characters} embodies {positive_values} and experiences {emotions} throughout these challenges. The story should be age-appropriate for {age}, rich in engaging details, and free from any vulgarity or violence.
+    Using previously crafted story outline : \"{story}\", write a detailed atleast 2000-word story in {lang}. Feature {characters}, whether solo or as a group, in {scenario}. Provide in-depth descriptions for each twist and turn they encounter, outlining the events, the characters\' responses, and how each situation is resolved. Provide climax and thriller in the story. Emphasize how {characters} embodies {positive_values} and experiences {emotions} throughout these challenges. The story should be age-appropriate for {age}, rich in engaging details, and free from any vulgarity or violence.
+
+    Rule (Don't Ignore) : Just Provide Only the Story body as string, with no title or anything extra like chapters.
 
 """
 
@@ -107,7 +109,7 @@ def story_length_increaser(story, age, characters, scenario, positive_values, em
     client = OpenAI()
 
     response = client.chat.completions.create(
-      model="gpt-3.5-turbo-0125",
+      model="gpt-4o-2024-05-13",
       max_tokens=2000,
     #   response_format={ "type": "json_object" },
       messages=[
@@ -124,13 +126,13 @@ def story_length_increaser(story, age, characters, scenario, positive_values, em
 # ------------------------- Image Prompt & Image File ---------------------------
 
 def image_prompt_generator(story):
-    prompt_template = f""" Generate a descriptive image prompt for the story and in the prompt give a detailed description about everything.  This is the Story :  \"{story}\"."""
+    prompt_template = f""" Generate a descriptive image prompt for the story and in the prompt give a detailed description about everything in 100 words. This is the Story :  \"{story}\"."""
 
     from openai import OpenAI
     client = OpenAI()
 
     response = client.chat.completions.create(
-      model="gpt-3.5-turbo-0125",
+      model="gpt-4o-2024-05-13",
       max_tokens=2000,
     #   response_format={ "type": "json_object" },
       messages=[
@@ -205,23 +207,6 @@ def save_img___from_link_to_local(image_url, index):
 
 # -----------------------  Audio Section - Audio Generation ----------------------
 
-# def text_to_audio_generate(input, index):
-
-#     from openai import OpenAI
-#     client = OpenAI()
-
-#     response = client.audio.speech.create(
-#       model="tts-1",
-#       voice="nova",
-#       input=input
-#     )
-
-#     audio_output_path = f"content/{index}/audio.mp3"
-
-#     response.stream_to_file(audio_output_path)
-
-#     return audio_output_path
-
 # Helper function to split text into chunks
 def split_text(text, chunk_size=4000):
     chunks = []
@@ -274,14 +259,14 @@ def generate_speech(title, story, index):
     # Generate speech for each chunk
     audio_files = []
     response = None  # Initialize response variable outside the loop
-    audio_story_chunk_count = 0
     for i, chunk in enumerate(story_chunks):
-        audio_story_chunk_count += 1
-        # input_text = title + "\n\n\n\n\n\n\n\n" + chunk
-        input_text = chunk + "\n\n\n\n\n\n\n\n"
+        if i==0:
+          input_text = title + "                " + chunk
+        else:
+          input_text=chunk
         response = client.audio.speech.create(
             model="tts-1",
-            voice="nova",
+            voice="onyx",
             input=input_text
         )
         file_path = os.path.join(f"content/{index}/", f"audio_{i}.wav")
@@ -379,7 +364,6 @@ def start_main_process(age, characters, scenario, positive_values, emotions, use
     
     thumb_img_path = save_img___from_link_to_local(create_image(img_prompt), index)
     timestamp = datetime.utcnow()
-    # audio_path = text_to_audio_generate(story, index)
     audio_path = generate_speech(title, story, index)
     audio_duration = get_audio_duration(audio_path)
     story_length = count_words(story)
@@ -398,6 +382,7 @@ def start_main_process(age, characters, scenario, positive_values, emotions, use
     }
 
     mongo_add(json_data)
+
     return json_data
 
 
