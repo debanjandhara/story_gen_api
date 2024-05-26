@@ -1,4 +1,5 @@
-501 : Audio Generation Error - Lengthy Response
+501 : Audio Generation Error - Lengthy Response / Generic Error
 401 : Check your Parameters
 402 : Error decoding OpenAI JSON Response (Error Generating Story by OpenAI / Parsing Error)
 502 : Error generating image / Audio
+503 : Error Generating Audio [Confirmed]

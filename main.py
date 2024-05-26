@@ -422,7 +422,11 @@ def start_main_process(age, characters, scenario, positive_values, emotions, use
     
     thumb_img_path = save_img___from_link_to_local(create_image(img_prompt), index)
     timestamp = datetime.utcnow()
-    audio_path = generate_speech(title, story, index)
+    try:
+        audio_path = generate_speech(title, story, index)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return jsonify({"title": "Story Generation Error - Please re-check your Parameters - Error Code : 503"})
     audio_duration = get_audio_duration(audio_path)
     story_length = count_words(story)
 
